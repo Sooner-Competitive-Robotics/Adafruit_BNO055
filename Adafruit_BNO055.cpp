@@ -417,24 +417,48 @@ void Adafruit_BNO055::getSensor(sensor_t *sensor)
 
 /**************************************************************************/
 /*!
-    @brief  Reads the sensor and returns the data as a sensors_event_t
+    @brief  Reads the sensor and returns the data as a scr_sensors_event_t
 */
 /**************************************************************************/
-bool Adafruit_BNO055::getEvent(sensors_event_t *event)
+bool Adafruit_BNO055::getOrientationEvent(scr_sensors_event_t *event)
 {
   /* Clear the event */
-  memset(event, 0, sizeof(sensors_event_t));
+  memset(event, 0, sizeof(scr_sensors_event_t));
 
-  event->version   = sizeof(sensors_event_t);
+  event->version   = sizeof(scr_sensors_event_t);
   event->sensor_id = _sensorID;
   event->type      = SENSOR_TYPE_ORIENTATION;
-  event->timestamp = millis();
+  event->timestamp = micros();
 
   /* Get a Euler angle sample for orientation */
   imu::Vector<3> euler = getVector(Adafruit_BNO055::VECTOR_EULER);
   event->orientation.x = euler.x();
   event->orientation.y = euler.y();
   event->orientation.z = euler.z();
+
+  return true;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Reads the sensor and returns the data as a scr_sensors_event_t
+*/
+/**************************************************************************/
+bool Adafruit_BNO055::getAccelerationEvent(scr_sensors_event_t *event)
+{
+  /* Clear the event */
+  memset(event, 0, sizeof(scr_sensors_event_t));
+
+  event->version   = sizeof(scr_sensors_event_t);
+  event->sensor_id = _sensorID;
+  event->type      = SENSOR_TYPE_ACCELEROMETER;
+  event->timestamp = micros();
+
+  /* Get a Accelerometer sample for acceleration */
+  imu::Vector<3> acceleration = getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
+  event->acceleration.x = acceleration.x();
+  event->acceleration.y = acceleration.y();
+  event->acceleration.z = acceleration.z();
 
   return true;
 }
